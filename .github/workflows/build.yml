@@ -39,13 +39,13 @@ jobs:
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-37.0" "build-tools;36.1.0" > /dev/null
 
       - name: Crypto core tests
-        run: ./gradlew :core-crypto:test --console=plain
+        run: scripts/ci-gradle.sh :core-crypto:test
 
       - name: Lint
-        run: ./gradlew :app:lintDebug --console=plain
+        run: scripts/ci-gradle.sh :app:lintDebug
 
       - name: Build debug and release APKs
-        run: ./gradlew :app:assembleDebug :app:assembleRelease --console=plain
+        run: scripts/ci-gradle.sh :app:assembleDebug :app:assembleRelease
 
       - name: APK security gate (permissions, exported components, backups)
         run: |
