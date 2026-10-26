@@ -55,7 +55,9 @@ jobs:
       - name: Record APK checksums
         run: sha256sum app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/release/app-release-unsigned.apk | tee apk-sha256.txt
 
+      # Uploads are a convenience; a full storage quota must not fail an otherwise good build.
       - name: Upload debug APK
+        continue-on-error: true
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: bulwark-debug-apk
@@ -66,6 +68,7 @@ jobs:
 
       - name: Upload test and lint reports
         if: always()
+        continue-on-error: true
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: reports
