@@ -1,0 +1,75 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# Least privilege: the build only needs to read the code.
+permissions:
+  contents: read
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Test, lint and build APKs
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      # Every action is pinned to a full commit hash, so a moved or hijacked tag cannot change it.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      # Also validates the Gradle wrapper jar against Gradle's published checksums.
+      - uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
+
+      - name: Install Android SDK packages
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-37.0" "build-tools;36.1.0" > /dev/null
+
+      - name: Crypto core tests
+        run: ./gradlew :core-crypto:test --console=plain
+
+      - name: Lint
+        run: ./gradlew :app:lintDebug --console=plain
+
+      - name: Build debug and release APKs
+        run: ./gradlew :app:assembleDebug :app:assembleRelease --console=plain
+
+      - name: APK security gate (permissions, exported components, backups)
+        run: |
+          python3 scripts/check_apk.py app/build/outputs/apk/debug/app-debug.apk
+          python3 scripts/check_apk.py app/build/outputs/apk/release/app-release-unsigned.apk --release
+
+      - name: Record APK checksums
+        run: sha256sum app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/release/app-release-unsigned.apk | tee apk-sha256.txt
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: bulwark-debug-apk
+          path: |
+            app/build/outputs/apk/debug/app-debug.apk
+            apk-sha256.txt
+          retention-days: 14
+
+      - name: Upload test and lint reports
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: reports
+          path: |
+            core-crypto/build/reports/tests/
+            app/build/reports/lint-results-debug.html
+          retention-days: 14
