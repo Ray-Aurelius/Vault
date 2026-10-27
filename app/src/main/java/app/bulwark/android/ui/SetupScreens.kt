@@ -27,6 +27,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -149,13 +150,25 @@ fun ShowWordsScreen(recovery: SecretBytes, onDone: () -> Unit, onBack: (() -> Un
             Modifier.fillMaxWidth().border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp)).padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            for (row in words.chunked(3).withIndex()) {
-                Row(Modifier.fillMaxWidth()) {
-                    row.value.forEachIndexed { i, w ->
-                        val n = row.index * 3 + i + 1
-                        Row(Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
-                            Text("$n", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.width(26.dp))
-                            Text(w, style = MaterialTheme.typography.bodyLarge.copy(fontFamily = SourceCodePro), fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onBackground)
+            // Two columns read top to bottom (1–12, then 13–24); one column when the phone uses large
+            // text. Words never wrap: a split word is easy to copy down wrong.
+            val columns = if (LocalDensity.current.fontScale > 1.3f) 1 else 2
+            val perColumn = (words.size + columns - 1) / columns
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                for (c in 0 until columns) {
+                    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        for (n in c * perColumn until minOf(words.size, (c + 1) * perColumn)) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(
+                                    "${n + 1}", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    maxLines = 1, softWrap = false, modifier = Modifier.width(32.dp),
+                                )
+                                Text(
+                                    words[n], style = MaterialTheme.typography.bodyLarge.copy(fontFamily = SourceCodePro),
+                                    fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onBackground,
+                                    maxLines = 1, softWrap = false,
+                                )
+                            }
                         }
                     }
                 }
