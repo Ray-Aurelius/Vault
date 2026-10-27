@@ -11,8 +11,8 @@ android {
         applicationId = "app.bulwark.android"
         minSdk = 29
         targetSdk = 36
-        versionCode = 1
-        versionName = "0.1.0-foundation"
+        versionCode = 4
+        versionName = "0.3.0-preview"
         ndk {
             // Phones in use today; x86_64 covers emulators. Drops JNA's obsolete mips/armeabi builds.
             abiFilters += setOf("arm64-v8a", "armeabi-v7a", "x86_64")
@@ -55,7 +55,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":core-crypto"))
+    implementation(project(":core-vault"))
 
     // libsodium for Android. Its JNA dependency is the desktop jar; swap in JNA's Android build,
     // which carries the native dispatch library for each phone CPU type.
@@ -66,6 +66,7 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.lifecycle.process)
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.ui)
     implementation(libs.compose.foundation)

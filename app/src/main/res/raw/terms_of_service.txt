@@ -1,0 +1,49 @@
+Version 1.0 (draft) · Effective [launch date]
+
+These Terms are an agreement between you and [Company name] ("we", "us") about your use of the Bulwark app. By tapping "I agree", you accept them. If you do not agree, do not use Bulwark.
+
+# 1. Eligibility
+You must be at least [13 / 16 / 18] years old, or the age of digital consent where you live, to use Bulwark.
+
+# 2. Licence
+When you buy Bulwark on Google Play, we grant you a personal, non-exclusive, non-transferable licence to install and use it on devices linked to your Google account, for as long as Google Play makes it available to you. Your one-time purchase includes all future updates we release. There are no subscriptions, in-app purchases or advertising. Bulwark's source code is also published under the GNU General Public License v3.0, which gives you the rights that licence describes.
+
+# 3. Your content
+You own everything you store in Bulwark. We never receive, see or hold it, and we claim no rights to it. You are responsible for making sure you have the right to store and capture what you put in Bulwark, including photos, videos and recordings of other people, and for complying with the laws that apply to you.
+
+# 4. How Bulwark works, and your responsibility
+Bulwark encrypts your content on your device using keys only you control. We have no copy of your password, recovery methods or keys, and no way to reset or recover them. You are solely responsible for:
+- creating and remembering your password;
+- choosing, creating and safely storing your recovery methods, or choosing to use none;
+- making and safely keeping backups;
+- anything you export, share, or open in another app;
+- keeping your device, its operating system and its other apps secure.
+
+You agree that if you lose your password and all recovery methods, or your device or backups are lost, damaged or wiped (including by Bulwark's optional self-destruct or duress features), your content may be permanently lost, we cannot recover it, and we are not responsible for that loss. This also applies to loss during imports, backups, restores or other operations that are interrupted, for example by a dead battery, a full phone, a restart or the app being closed. You agree to keep your own copies of important files until you have confirmed they are safely stored in Bulwark.
+
+# 5. Acceptable use
+Do not use Bulwark to store or create content that is illegal where you live, including child sexual abuse material, or to violate other people's rights.
+
+# 6. Security features
+Features such as self-destruct, duress password and decoy vault are provided for your protection, and you use them at your own discretion. Laws on encryption and on refusing to unlock a device differ by country; you are responsible for knowing and following the laws that apply to you.
+
+# 7. No warranty
+To the fullest extent the law allows, Bulwark is provided "as is" and "as available", without warranties of any kind, whether express or implied, including fitness for a particular purpose and non-infringement. We do not promise that Bulwark will be error-free, uninterrupted, or able to prevent every attack.
+
+# 8. Limitation of liability
+To the fullest extent the law allows, we are not liable for any indirect, incidental, special or consequential damages, or for any loss of data, content, privacy, profits or goodwill, arising from your use of or inability to use Bulwark. Our total liability for any claim is limited to the amount you paid for Bulwark. Some places do not allow these limits, so they may not fully apply to you; nothing in these Terms limits rights you have under consumer protection law that cannot be waived.
+
+# 9. Refunds
+Purchases and refunds are handled by Google Play under its policies.
+
+# 10. Changes to Bulwark and these Terms
+We may update Bulwark and these Terms. If we make a material change to the Terms, the app will show you the new version before you continue. If you do not agree, you may stop using Bulwark; your content stays on your device and you can still export it.
+
+# 11. Ending use
+You can stop using Bulwark at any time by deleting it. Uninstalling Bulwark deletes the vault on that device; anything not exported or backed up first is permanently lost.
+
+# 12. Governing law
+These Terms are governed by the laws of [State / country], without regard to conflict-of-law rules. [Dispute resolution clause to be decided with counsel.]
+
+# 13. Contact
+[Company name], [address], [email address].

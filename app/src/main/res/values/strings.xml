@@ -2,11 +2,310 @@
 <resources>
     <string name="app_name">Bulwark</string>
     <string name="tagline">Encrypted file storage</string>
-    <string name="foundation_title">Foundation build</string>
-    <string name="foundation_body">This early build checks that Bulwark\'s encryption works on your phone. It does not store any files yet.</string>
-    <string name="self_test_running">Running encryption self-test…</string>
-    <string name="self_test_passed">Encryption self-test passed</string>
-    <string name="self_test_failed">Encryption self-test failed: %1$s</string>
-    <string name="self_test_detail">Argon2id, XChaCha20-Poly1305 streaming, keyslots and recovery words checked on this device in %1$d ms.</string>
+
+    <!-- Common -->
+    <string name="back">Back</string>
+    <string name="next">Next</string>
+    <string name="continue_label">Continue</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="save">Save</string>
+    <string name="confirm">Confirm</string>
+    <string name="remove">Remove</string>
+    <string name="start">Start</string>
+    <string name="start_anyway">Start anyway</string>
+    <string name="try_again">Try again</string>
+    <string name="i_understand">I understand</string>
+    <string name="name">Name</string>
+    <string name="show_password">Show password</string>
+    <string name="hide_password">Hide password</string>
+    <string name="not_responsible">Bulwark can\'t recover lost files, and we are not responsible for lost data.</string>
     <string name="no_internet">No internet permission. Check it yourself in Settings → Apps → Bulwark → Permissions.</string>
+
+    <!-- Onboarding -->
+    <string name="welcome_line">Your files, locked on your phone. No accounts, no internet, no ads, no tracking. Ever.</string>
+    <string name="get_started">Get started</string>
+    <string name="skip_walkthrough">Skip walkthrough</string>
+    <string name="how_title">How Bulwark works</string>
+    <string name="how_1_title">Everything is encrypted on this phone</string>
+    <string name="how_1_body">Your files, their names and your folders are encrypted before they are stored. Only your password or recovery key can open them.</string>
+    <string name="how_2_title">Bulwark has no internet access</string>
+    <string name="how_2_body">The app has no internet permission at all, so nothing can leave your phone unless you export it yourself.</string>
+    <string name="how_3_title">Nobody can reset your password</string>
+    <string name="how_3_body">Not even us. If you lose your password and your recovery key, your files are gone for good. That is what keeps them private.</string>
+    <string name="terms_title">Terms of Service</string>
+    <string name="privacy_title">Privacy &amp; Security Statement</string>
+    <string name="terms_scroll_hint">Scroll to the end to continue.</string>
+    <string name="terms_check_agree">I have read and agree to the Terms of Service</string>
+    <string name="terms_check_understand">I understand Bulwark cannot recover my files if I lose my password and all recovery methods</string>
+    <string name="i_agree">I agree</string>
+    <string name="decline">Decline and close Bulwark</string>
+    <string name="privacy_ack">I\'ve read the statement</string>
+
+    <!-- Password -->
+    <string name="create_password_title">Create your password</string>
+    <string name="create_password_body">This password is the master key to your vault. Use something long that you will remember, or let Bulwark generate a passphrase.</string>
+    <string name="password_label">Password</string>
+    <string name="password_again_label">Type it again</string>
+    <string name="passwords_differ">The two passwords don\'t match.</string>
+    <string name="generate_passphrase">Generate a passphrase</string>
+    <string name="generated_hint">Write this passphrase down somewhere safe before you continue.</string>
+    <string name="password_warning">Write your password down somewhere safe. Nobody, including us, can reset it.</string>
+    <string name="check_screen">Check no one can see your screen when you show a password.</string>
+    <string name="strength_too_weak">Too weak</string>
+    <string name="strength_weak">Not strong enough yet</string>
+    <string name="strength_good">Good</string>
+    <string name="strength_strong">Strong</string>
+    <string name="hint_too_short">Make it longer: 4 or more random words, or 14+ mixed characters.</string>
+    <string name="hint_common">This is one of the most common passwords. Choose something else.</string>
+    <string name="hint_repeats">Repeated characters add little strength.</string>
+    <string name="hint_sequence">Sequences like 1234 or abcd are easy to guess.</string>
+    <string name="hint_variety">Add length, words or a mix of characters.</string>
+    <string name="new_password_title">Choose a new password</string>
+    <string name="new_password_after_recovery">You unlocked with your recovery key. Choose a new password now; your recovery key keeps working.</string>
+    <string name="change_password">Change password</string>
+    <string name="change_password_body">Choose a new password. The old one stops working immediately. Your files are not re-encrypted, so this is quick.</string>
+
+    <!-- Recovery -->
+    <string name="recovery_title">If you forget your password</string>
+    <string name="recovery_intro">Choose how you could get back into your vault. Everything stays offline.</string>
+    <string name="recovery_key_option">Recovery key (recommended)</string>
+    <string name="recovery_key_option_body">24 words you write down and keep safe. They unlock your vault if you forget your password.</string>
+    <string name="recovery_key_choose">Create a recovery key</string>
+    <string name="recovery_none_option">No recovery</string>
+    <string name="recovery_none_option_body">If you forget your password, your files are gone for good.</string>
+    <string name="recovery_none_choose">Continue without recovery</string>
+    <string name="recovery_more_later">A printable recovery sheet, split recovery and hardware security keys arrive in a later update.</string>
+    <string name="words_title">Your recovery key</string>
+    <string name="words_body">Write these 24 words down, in order, on paper. Keep them somewhere safe and private.</string>
+    <string name="words_warning">Anyone with these words can open your vault. Don\'t photograph them or store them on this phone.</string>
+    <string name="words_no_copy">Copying is turned off on this screen on purpose.</string>
+    <string name="words_written">I\'ve written them down</string>
+    <string name="confirm_words_title">Check your recovery key</string>
+    <string name="confirm_words_body">Type these words from your recovery key to make sure you wrote them down correctly.</string>
+    <string name="word_number">Word %1$d</string>
+    <string name="confirm_words_wrong">Those words don\'t match. Check your paper or view the words again.</string>
+    <string name="show_words_again">Show the words again</string>
+    <string name="skip_title">Continue without recovery</string>
+    <string name="skip_body">Without a recovery method, forgetting your password means your files are permanently lost. You can add a recovery key later in Settings.</string>
+    <string name="skip_type">To continue, type: %1$s</string>
+    <string name="skip_phrase">I understand my files cannot be recovered</string>
+    <string name="skip_label">Type the sentence above</string>
+    <string name="skip_confirm">Continue without recovery</string>
+    <string name="securing_body">Securing your vault. This takes a few seconds while Bulwark tunes its protection to this phone.</string>
+    <string name="securing_failed_title">Something went wrong</string>
+    <string name="securing_failed_body">Bulwark couldn\'t finish securing the vault. Nothing was saved. Please try again.</string>
+
+    <!-- Unlock -->
+    <string name="unlock_subtitle">Enter your password to unlock</string>
+    <string name="unlock">Unlock</string>
+    <string name="unlock_wrong">That password didn\'t work.</string>
+    <string name="unlock_damaged">This vault couldn\'t be opened because its data is damaged.</string>
+    <string name="unlock_device_key_missing">This phone\'s security key for the vault is missing, so the vault on this phone can\'t be opened.</string>
+    <string name="unlock_footer">Bulwark locks itself when you leave the app, turn off the screen, or stop using it.</string>
+    <string name="use_recovery_key">Use recovery key</string>
+    <string name="recovery_unlock_body">Type your 24 recovery words in order. The first four letters of each word are enough.</string>
+    <string name="recovery_words_label">Recovery words</string>
+    <string name="recovery_wrong">These words are valid but don\'t unlock this vault.</string>
+    <string name="recovery_unlock_after">After unlocking you\'ll choose a new password.</string>
+
+    <!-- Vault -->
+    <string name="trash">Trash</string>
+    <string name="settings">Settings</string>
+    <string name="lock_now">Lock now</string>
+    <string name="new_folder">New folder</string>
+    <string name="import_files">Import</string>
+    <string name="folder">Folder</string>
+    <string name="empty_vault">Your vault is empty</string>
+    <string name="empty_folder">This folder is empty</string>
+    <string name="empty_hint">Tap Import to add files. They are encrypted as they come in.</string>
+    <string name="more_options">More options for %1$s</string>
+    <string name="rename">Rename</string>
+    <string name="move">Move</string>
+    <string name="move_title">Move \"%1$s\" to</string>
+    <string name="top_level">Top level</string>
+    <string name="move_to_trash">Move to trash</string>
+    <string name="no_recovery_banner_title">No recovery set</string>
+    <string name="no_recovery_banner_body">If you forget your password, your files are gone.</string>
+    <string name="set_up_recovery">Set up recovery key</string>
+
+    <!-- Import -->
+    <string name="no_space_title">Not enough space</string>
+    <string name="no_space_body">This import needs about %1$s free (including safety room), but only %2$s is free. Free up space and try again.</string>
+    <string name="battery_low_title">Charge your phone first</string>
+    <string name="battery_low_body">Your battery is at %1$d%%. Plug in your phone before starting a large import.</string>
+    <string name="large_import_title">Large import: %1$s, about %2$d min</string>
+    <string name="large_import_body">Plug your phone in and keep Bulwark open until it finishes. Don\'t restart your phone or uninstall Bulwark during the import. Your originals will not be touched. Keep your own copy of these files until you\'ve confirmed they\'re in Bulwark.</string>
+    <string name="large_import_plug_in">Your battery is at %1$d%% and not charging. Plugging in is strongly recommended.</string>
+    <string name="importing_title">Encrypting file %1$d of %2$d</string>
+    <string name="importing_keep_open">Keep Bulwark open. Locking the vault stops the import safely.</string>
+    <string name="import_done">Import finished</string>
+    <string name="import_stopped">Import stopped</string>
+    <string name="import_originals_note">Your originals were not changed. Delete them yourself once you\'ve checked the files in Bulwark.</string>
+
+    <!-- Export and viewer -->
+    <string name="export">Export</string>
+    <string name="export_title">Export a decrypted copy?</string>
+    <string name="export_body">The exported copy is not encrypted and leaves Bulwark\'s protection. Other apps on your phone may be able to read it.</string>
+    <string name="export_done">Exported</string>
+    <string name="export_failed">Export failed. No partial copy was left behind.</string>
+    <string name="preview_unsupported_title">No preview for this file type yet</string>
+    <string name="preview_unsupported_body">You can export a decrypted copy to open it in another app.</string>
+    <string name="preview_large_title">Too large to preview</string>
+    <string name="preview_damaged_title">This file is damaged</string>
+    <string name="preview_damaged_body">It failed Bulwark\'s integrity check, so it was not opened. It may have been changed or corrupted on the phone\'s storage.</string>
+
+    <!-- Trash -->
+    <string name="trash_retention">Items in the trash are permanently deleted after 30 days.</string>
+    <string name="trash_empty">The trash is empty.</string>
+    <string name="empty_trash">Empty trash</string>
+    <string name="empty_trash_title">Empty the trash?</string>
+    <string name="delete_phrase">delete forever</string>
+    <string name="restore_item">Restore %1$s</string>
+    <string name="delete_forever_item">Delete %1$s forever</string>
+    <string name="delete_forever">Delete forever</string>
+    <string name="delete_forever_title">Delete forever?</string>
+    <string name="delete_forever_body">\"%1$s\" will be permanently deleted. Nobody can recover it.</string>
+
+    <!-- Settings -->
+    <string name="section_security">Security</string>
+    <string name="section_storage">Storage</string>
+    <string name="section_about">About</string>
+    <string name="auto_lock">Auto-lock</string>
+    <string name="replace_recovery_key">Replace recovery key</string>
+    <string name="replace_recovery_key_sub">Creates new words; the old ones stop working at once</string>
+    <string name="remove_recovery_key">Remove recovery key</string>
+    <string name="remove_recovery_body">Your recovery words will stop working. If you then forget your password, your files are gone.</string>
+    <string name="no_recovery_sub">Not set: forgetting your password means losing your files</string>
+    <string name="device_protection">Device protection</string>
+    <string name="protection_strongbox">StrongBox security chip</string>
+    <string name="protection_tee">Phone\'s secure hardware (TEE)</string>
+    <string name="protection_software">Software only (this phone has no secure key hardware)</string>
+    <string name="protection_unknown">Checking…</string>
+    <string name="run_self_test">Run encryption self-test</string>
+    <string name="self_test_running">Running encryption self-test…</string>
+    <string name="self_test_failed">Encryption self-test failed: %1$s</string>
+    <string name="self_test_detail">Passed: Argon2id, XChaCha20-Poly1305 streaming, keyslots and recovery words checked in %1$d ms.</string>
+    <string name="storage_used">Storage used</string>
+    <string name="uninstall_warning">Uninstalling Bulwark deletes your vault on this phone. Encrypted backups arrive in a later update; until then, keep your own copies of important files.</string>
+    <string name="licences">Open-source licences</string>
+    <string name="version">Version</string>
+
+
+    <!-- Security & privacy -->
+    <string name="security_privacy">Security &amp; privacy</string>
+    <string name="security_privacy_sub">Biometrics, auto-lock, break-in protection, screen privacy</string>
+    <string name="security_intro">Every setting starts at its most private choice. Making Bulwark less strict asks for your password first.</string>
+    <string name="section_unlock">Unlocking</string>
+    <string name="section_auto_lock">Auto-lock</string>
+    <string name="section_break_in">Break-in protection</string>
+    <string name="section_screen">Screen privacy</string>
+    <string name="section_files">Files</string>
+    <string name="section_danger">Danger zone</string>
+    <string name="off">Off</string>
+    <string name="turn_on">Turn on</string>
+    <string name="allow">Allow</string>
+    <string name="erase">Erase</string>
+    <string name="confirm_password_title">Confirm it\'s you</string>
+    <string name="confirm_password_body">Enter your vault password to make this change.</string>
+
+    <string name="bio_unlock">Fingerprint or face unlock</string>
+    <string name="bio_off_sub">Off. When on, a fresh fingerprint or face match is needed every time; your biometric data never leaves the phone\'s secure hardware.</string>
+    <string name="bio_on_sub">On. Your password is still required after a restart and when the time below runs out.</string>
+    <string name="bio_no_hardware">This phone has no strong fingerprint or face sensor that Bulwark can use.</string>
+    <string name="bio_not_enrolled">Add a fingerprint or face in your phone\'s settings first.</string>
+    <string name="bio_prompt_title">Bulwark</string>
+    <string name="bio_prompt_setup">Confirm to turn on biometric unlock</string>
+    <string name="bio_prompt_unlock">Unlock your vault</string>
+    <string name="bio_use_password">Use password</string>
+    <string name="bio_unlock_button">Unlock with fingerprint or face</string>
+    <string name="bio_setup_failed">Biometric unlock couldn\'t be turned on. Please try again.</string>
+    <string name="bio_invalidated">Your phone\'s fingerprints or faces changed, so biometric unlock was switched off. Use your password, then turn it back on in Settings if you want it.</string>
+    <string name="password_every">Ask for the password every</string>
+    <string name="password_every_sub">%1$s, and always after the phone restarts</string>
+
+    <string name="lock_leaving">When you leave Bulwark</string>
+    <string name="immediately">Lock immediately</string>
+    <string name="lock_screen_off">Lock when the screen turns off</string>
+    <string name="lock_screen_off_sub">Recommended. Locks even within the time above.</string>
+
+    <string name="attempt_delays">Delays after wrong passwords</string>
+    <string name="attempt_delays_sub">Always on: after 5 wrong tries, waits grow from 30 seconds to 1 hour.</string>
+    <string name="notify_failed">Tell me about wrong attempts</string>
+    <string name="notify_failed_sub">After you unlock, see how many wrong passwords were tried while it was locked.</string>
+    <string name="erase_after">Erase vault after wrong passwords</string>
+    <string name="erase_phrase">erase my vault</string>
+
+    <string name="block_screens">Block screenshots and hide in recent apps</string>
+    <string name="block_screens_sub">Also blocks screen recording and casting.</string>
+    <string name="allow_screens_title">Allow screenshots?</string>
+    <string name="allow_screens_body">Screenshots, screen recordings and the recent-apps preview could then show your files, and other apps could capture them.</string>
+
+    <string name="confirm_export">Ask for password before exporting</string>
+    <string name="confirm_export_sub">Stops someone with your unlocked phone from taking decrypted copies.</string>
+    <string name="trash_keep">Keep items in the trash for</string>
+
+    <string name="erase_now">Erase this vault</string>
+    <string name="erase_now_sub">Permanently destroys the vault and its keys on this phone.</string>
+    <string name="erase_now_body">Every file in this vault and its keys on this phone will be destroyed immediately. Nobody can undo this.</string>
+
+    <string name="failed_notice_body">If that wasn\'t you, someone may have tried to open your vault. Consider changing your password.</string>
+
+    <plurals name="days">
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
+    <plurals name="hours">
+        <item quantity="one">%d hour</item>
+        <item quantity="other">%d hours</item>
+    </plurals>
+    <plurals name="after_seconds">
+        <item quantity="one">After %d second</item>
+        <item quantity="other">After %d seconds</item>
+    </plurals>
+    <plurals name="after_minutes">
+        <item quantity="one">After %d minute</item>
+        <item quantity="other">After %d minutes</item>
+    </plurals>
+    <plurals name="erase_after_count">
+        <item quantity="one">After %d wrong password</item>
+        <item quantity="other">After %d wrong passwords in a row</item>
+    </plurals>
+    <plurals name="erase_after_body">
+        <item quantity="one">After %d wrong password, everything in this vault on this phone will be destroyed. Nobody can recover it.</item>
+        <item quantity="other">After %d wrong passwords in a row, everything in this vault on this phone will be destroyed. Nobody can recover it, and anyone who picks up your phone could trigger it.</item>
+    </plurals>
+    <plurals name="erase_warning">
+        <item quantity="one">%d more wrong password will erase this vault.</item>
+        <item quantity="other">%d more wrong passwords will erase this vault.</item>
+    </plurals>
+    <plurals name="failed_notice_title">
+        <item quantity="one">%d wrong password since you last unlocked</item>
+        <item quantity="other">%d wrong passwords since you last unlocked</item>
+    </plurals>
+
+    <plurals name="storage_used_sub">
+        <item quantity="one">%1$s for %2$d file, including encryption overhead</item>
+        <item quantity="other">%1$s for %2$d files, including encryption overhead</item>
+    </plurals>
+    <plurals name="auto_lock_minutes">
+        <item quantity="one">After %d minute idle</item>
+        <item quantity="other">After %d minutes idle</item>
+    </plurals>
+    <plurals name="unlock_wait">
+        <item quantity="one">Too many attempts. Try again in %d second.</item>
+        <item quantity="other">Too many attempts. Try again in %d seconds.</item>
+    </plurals>
+    <plurals name="imported_count">
+        <item quantity="one">%d file encrypted and added.</item>
+        <item quantity="other">%d files encrypted and added.</item>
+    </plurals>
+    <plurals name="not_imported_count">
+        <item quantity="one">%d file was not added.</item>
+        <item quantity="other">%d files were not added.</item>
+    </plurals>
+    <plurals name="empty_trash_body">
+        <item quantity="one">%d item will be permanently deleted. Nobody can recover it.</item>
+        <item quantity="other">%d items will be permanently deleted. Nobody can recover them.</item>
+    </plurals>
 </resources>
