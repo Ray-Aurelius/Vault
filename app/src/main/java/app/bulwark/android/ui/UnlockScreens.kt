@@ -1,5 +1,7 @@
 package app.bulwark.android.ui
 
+import android.app.Activity
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,7 +28,10 @@ import app.bulwark.android.session.VaultSession
 import app.bulwark.android.session.VaultSession.UnlockResult
 import app.bulwark.crypto.InvalidRecoveryPhraseException
 import app.bulwark.crypto.RecoveryKey
+import app.bulwark.crypto.SecretBytes
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.launch
 
 @Composable
@@ -47,25 +52,64 @@ private fun PasswordUnlockScreen(session: VaultSession, onUseRecovery: () -> Uni
     val scope = rememberCoroutineScope()
     var hasRecovery by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
-        hasRecovery = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Default) {
+        hasRecovery = withContext(Dispatchers.Default) {
             runCatching { session.store.hasRecoveryKey() }.getOrDefault(false)
         }
     }
     val wrongText = stringResource(R.string.unlock_wrong)
     val damagedText = stringResource(R.string.unlock_damaged)
     val missingText = stringResource(R.string.unlock_device_key_missing)
+    val bioChangedText = stringResource(R.string.bio_invalidated)
+    val bioTitle = stringResource(R.string.bio_prompt_title)
+    val bioSubtitle = stringResource(R.string.bio_prompt_unlock)
+    val bioCancel = stringResource(R.string.bio_use_password)
+    var eraseWarning by remember { mutableStateOf<Int?>(null) }
+    val activity = LocalActivity.current!!
+    var bioAllowed by remember { mutableStateOf(false) }
+
+    fun handle(r: UnlockResult) {
+        when (r) {
+            UnlockResult.Success, UnlockResult.Erased -> Unit
+            is UnlockResult.Wrong -> {
+                message = wrongText; eraseWarning = r.attemptsBeforeErase
+                waitUntil = System.currentTimeMillis() + r.waitMillis; now = System.currentTimeMillis()
+            }
+            is UnlockResult.Wait -> { waitUntil = System.currentTimeMillis() + r.millis; now = System.currentTimeMillis() }
+            UnlockResult.Damaged -> message = damagedText
+            UnlockResult.DeviceKeyMissing -> message = missingText
+        }
+    }
+
+    fun promptBiometric() {
+        if (busy || waiting) return
+        val cipher = session.biometrics.cipherForUnlock()
+        if (cipher == null) {
+            // Android destroyed the key (new fingerprint or face added): the password is required now.
+            session.prefs.biometricEnabled = false; bioAllowed = false; message = bioChangedText; return
+        }
+        session.beginExternalActivity()
+        session.biometrics.prompt(activity, bioTitle, bioSubtitle, bioCancel, cipher) { authorized, error ->
+            session.endExternalActivity()
+            if (authorized == null) { if (error != null) message = error; return@prompt }
+            busy = true; message = null
+            scope.launch {
+                val secret = runCatching { SecretBytes.adopt(session.biometrics.open(authorized)) }.getOrNull()
+                if (secret == null) message = bioChangedText else handle(session.unlockWithBiometric(secret))
+                busy = false
+            }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        bioAllowed = withContext(Dispatchers.Default) { session.biometricAllowedNow() }
+        if (bioAllowed) promptBiometric()
+    }
 
     fun submit() {
         if (pw.isEmpty() || busy || waiting) return
         busy = true; message = null
         scope.launch {
-            when (val r = session.unlock(pw.toCharArray())) {
-                UnlockResult.Success -> Unit
-                is UnlockResult.Wrong -> { message = wrongText; waitUntil = System.currentTimeMillis() + r.waitMillis; now = System.currentTimeMillis() }
-                is UnlockResult.Wait -> { waitUntil = System.currentTimeMillis() + r.millis; now = System.currentTimeMillis() }
-                UnlockResult.Damaged -> message = damagedText
-                UnlockResult.DeviceKeyMissing -> message = missingText
-            }
+            handle(session.unlock(pw.toCharArray()))
             pw = ""; busy = false
         }
     }
@@ -76,6 +120,12 @@ private fun PasswordUnlockScreen(session: VaultSession, onUseRecovery: () -> Uni
         Spacer(Modifier.height(32.dp))
         SecretField(pw, { pw = it }, stringResource(R.string.password_label), onImeAction = ::submit, isError = message != null)
         message?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(top = 6.dp)) }
+        eraseWarning?.let { left ->
+            Text(
+                pluralStringResource(R.plurals.erase_warning, left, left), color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.labelLarge, modifier = Modifier.padding(top = 6.dp),
+            )
+        }
         if (waiting) {
             val secs = ((waitUntil - now) / 1000).toInt() + 1
             Quiet(pluralStringResource(R.plurals.unlock_wait, secs, secs), Modifier.padding(top = 6.dp))
@@ -83,6 +133,7 @@ private fun PasswordUnlockScreen(session: VaultSession, onUseRecovery: () -> Uni
         Spacer(Modifier.height(16.dp))
         if (busy) Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) { CircularProgressIndicator() }
         else PrimaryButton(stringResource(R.string.unlock), ::submit, enabled = pw.isNotEmpty() && !waiting)
+        if (bioAllowed && !busy) SecondaryButton(stringResource(R.string.bio_unlock_button), ::promptBiometric, enabled = !waiting, modifier = Modifier.padding(top = 12.dp))
         if (hasRecovery) LinkButton(stringResource(R.string.use_recovery_key), onUseRecovery)
         Spacer(Modifier.height(24.dp))
         Quiet(stringResource(R.string.unlock_footer))
@@ -106,6 +157,7 @@ private fun RecoveryUnlockScreen(session: VaultSession, onBack: () -> Unit) {
             when (val r = session.unlockWithRecovery(key)) {
                 UnlockResult.Success -> Unit
                 is UnlockResult.Wrong, is UnlockResult.Wait -> message = wrongText
+                UnlockResult.Erased -> Unit
                 else -> message = damagedText
             }
             busy = false

@@ -39,6 +39,8 @@ class VaultStore(
     private val primitives: Primitives,
     private val sealer: KeyringSealer,
     private val clock: () -> Long = System::currentTimeMillis,
+    /** How long trashed items are kept; read on every unlock, so a settings change applies next time. */
+    private val trashRetentionMillis: () -> Long = { UnlockedVault.DEFAULT_TRASH_RETENTION },
 ) {
     private val keyringFile = File(root, "keyring.bin")
     private val sealFile = File(root, "seal.bin")
@@ -78,8 +80,14 @@ class VaultStore(
     /** Throws [app.bulwark.crypto.WrongCredentialsException] on a wrong password. */
     fun unlock(password: CharArray): UnlockedVault = open(readKeyring().let { it to it.unlockWithPassword(primitives, password) })
 
-    fun unlockWithRecoveryKey(recoveryKey: SecretBytes): UnlockedVault =
-        open(readKeyring().let { it to it.unlockWithSecret(primitives, Keyslot.Type.RECOVERY_KEY, recoveryKey) })
+    fun unlockWithRecoveryKey(recoveryKey: SecretBytes): UnlockedVault = unlockWithSecret(Keyslot.Type.RECOVERY_KEY, recoveryKey)
+
+    /** Unlocks with a 32-byte secret for a non-password slot type (recovery key, biometric, hardware key). */
+    fun unlockWithSecret(type: Keyslot.Type, secret: SecretBytes): UnlockedVault =
+        open(readKeyring().let { it to it.unlockWithSecret(primitives, type, secret) })
+
+    /** Whether a slot of [type] exists; readable while locked (slots hold no secrets in the clear). */
+    fun hasSlot(type: Keyslot.Type): Boolean = readKeyring().ofType(type).isNotEmpty()
 
     /** Crypto-erase: destroys the device key, then deletes every file. */
     fun eraseEverything() {
@@ -91,7 +99,7 @@ class VaultStore(
         val (ring, mk) = pair
         try {
             val entries = UnlockedVault.loadIndex(this, primitives, mk)
-            return UnlockedVault(this, primitives, mk, ring, clock, entries).also { it.maintenance() }
+            return UnlockedVault(this, primitives, mk, ring, clock, entries).also { it.maintenance(trashRetentionMillis()) }
         } catch (t: Throwable) {
             mk.close()
             throw t
@@ -283,15 +291,35 @@ class UnlockedVault internal constructor(
     }
 
     /** Replaces the recovery key (or removes it when [recoveryKey] is null). The old one stops working at once. */
-    fun setRecoveryKey(recoveryKey: SecretBytes?) = synchronized(lock) {
+    fun setRecoveryKey(recoveryKey: SecretBytes?) = setSecretSlot(Keyslot.Type.RECOVERY_KEY, recoveryKey)
+
+    /**
+     * Replaces every slot of [type] with one opened by [secret], or removes them when [secret] is
+     * null. Used for the recovery key and biometric unlock; other slots are untouched.
+     */
+    fun setSecretSlot(type: Keyslot.Type, secret: SecretBytes?) = synchronized(lock) {
         ensureOpen()
-        var ring = Keyring(keyring.slots.filterNot { it.type == Keyslot.Type.RECOVERY_KEY })
-        if (recoveryKey != null) ring = ring.with(Keyslot.createWithSecret(primitives, masterKey, Keyslot.Type.RECOVERY_KEY, recoveryKey))
+        require(!type.usesPasswordKdf) { "Password slots use changePassword" }
+        var ring = Keyring(keyring.slots.filterNot { it.type == type })
+        if (secret != null) ring = ring.with(Keyslot.createWithSecret(primitives, masterKey, type, secret))
         store.writeKeyring(ring)
         keyring = ring
     }
 
-    val hasRecoveryKey: Boolean get() = synchronized(lock) { keyring.ofType(Keyslot.Type.RECOVERY_KEY).isNotEmpty() }
+    fun hasSlot(type: Keyslot.Type): Boolean = synchronized(lock) { keyring.ofType(type).isNotEmpty() }
+
+    val hasRecoveryKey: Boolean get() = hasSlot(Keyslot.Type.RECOVERY_KEY)
+
+    /** Checks the password without changing anything (for "confirm password" prompts). Slow by design. */
+    fun verifyPassword(password: CharArray): Boolean {
+        val ring = synchronized(lock) { ensureOpen(); keyring }
+        return try {
+            ring.unlockWithPassword(primitives, password).close()
+            true
+        } catch (_: app.bulwark.crypto.WrongCredentialsException) {
+            false
+        }
+    }
 
     override fun close() {
         synchronized(lock) {

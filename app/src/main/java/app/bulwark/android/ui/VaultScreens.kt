@@ -32,7 +32,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
@@ -44,7 +43,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -89,6 +87,7 @@ private sealed interface Screen {
     data class Viewer(val id: FileId) : Screen
     data object Trash : Screen
     data object Settings : Screen
+    data object Security : Screen
     data object ChangePassword : Screen
     data object RecoverySetup : Screen
     data class Legal(@RawRes val res: Int, val title: Int) : Screen
@@ -106,7 +105,8 @@ fun VaultHome(session: VaultSession, vault: UnlockedVault) {
 
     BackHandler(enabled = screen != Screen.Browser || folder != null) {
         when {
-            screen is Screen.Legal || screen == Screen.Licences || screen == Screen.ChangePassword || screen == Screen.RecoverySetup -> screen = Screen.Settings
+            screen == Screen.ChangePassword || screen == Screen.RecoverySetup -> screen = Screen.Security
+            screen is Screen.Legal || screen == Screen.Licences || screen == Screen.Security -> screen = Screen.Settings
             screen != Screen.Browser -> toBrowser()
             else -> folderHex = vault.get(folder!!)?.parent?.hex
         }
@@ -122,12 +122,28 @@ fun VaultHome(session: VaultSession, vault: UnlockedVault) {
         is Screen.Viewer -> ViewerScreen(session, vault, s.id, onBack = toBrowser)
         Screen.Trash -> TrashScreen(vault, version, refresh, onBack = toBrowser)
         Screen.Settings -> SettingsScreen(session, vault, onBack = toBrowser, open = { screen = it })
-        Screen.ChangePassword -> ChangePasswordFlow(session, onDone = { screen = Screen.Settings })
-        Screen.RecoverySetup -> RecoverySetupFlow(session, vault, onDone = { screen = Screen.Settings })
+        Screen.Security -> SecuritySettingsScreen(
+            session, vault, onBack = { screen = Screen.Settings },
+            openChangePassword = { screen = Screen.ChangePassword }, openRecoverySetup = { screen = Screen.RecoverySetup },
+        )
+        Screen.ChangePassword -> ChangePasswordFlow(session, onDone = { screen = Screen.Security })
+        Screen.RecoverySetup -> RecoverySetupFlow(session, vault, onDone = { screen = Screen.Security })
         is Screen.Legal -> Page(title = stringResource(s.title), onBack = { screen = Screen.Settings }) { LegalText(s.res) }
         Screen.Licences -> Page(title = stringResource(R.string.licences), onBack = { screen = Screen.Settings }) { LegalText(R.raw.licences) }
     }
     ImportOverlay(session.importer, onFinished = refresh)
+    FailedAttemptsNotice(session)
+}
+
+@Composable
+private fun FailedAttemptsNotice(session: VaultSession) {
+    val count by session.failedNotice.collectAsState()
+    if (count > 0) AlertDialog(
+        onDismissRequest = session::dismissFailedNotice,
+        title = { Text(pluralStringResource(R.plurals.failed_notice_title, count, count)) },
+        text = { Text(stringResource(R.string.failed_notice_body)) },
+        confirmButton = { TextButton(onClick = session::dismissFailedNotice) { Text(stringResource(R.string.ok)) } },
+    )
 }
 
 // ---------------------------------------------------------------- Browser
@@ -365,6 +381,7 @@ private fun rememberExporter(session: VaultSession, vault: UnlockedVault): (Vaul
     val scope = rememberCoroutineScope()
     var pending by remember { mutableStateOf<VaultEntry?>(null) }
     var result by remember { mutableStateOf<Boolean?>(null) }
+    var needsPassword by remember { mutableStateOf<VaultEntry?>(null) }
     val launcher = rememberLauncherForActivityResult(CreateTypedDocument()) { uri ->
         session.endExternalActivity()
         val entry = pending ?: return@rememberLauncherForActivityResult
@@ -389,11 +406,17 @@ private fun rememberExporter(session: VaultSession, vault: UnlockedVault): (Vaul
             confirmButton = { TextButton(onClick = { result = null }) { Text(stringResource(R.string.ok)) } },
         )
     }
-    return { entry ->
+    val launch = { entry: VaultEntry ->
         pending = entry
         session.beginExternalActivity()
         launcher.launch(entry.name to entry.mimeType.ifBlank { "application/octet-stream" })
     }
+    needsPassword?.let { entry ->
+        PasswordConfirmDialog(session, stringResource(R.string.confirm_export), onDismiss = { needsPassword = null }) {
+            needsPassword = null; launch(entry)
+        }
+    }
+    return { entry -> if (session.prefs.confirmPasswordForExport) needsPassword = entry else launch(entry) }
 }
 
 // ---------------------------------------------------------------- Viewer
@@ -532,27 +555,17 @@ private fun TrashScreen(vault: UnlockedVault, version: Int, refresh: () -> Unit,
 @Composable
 private fun SettingsScreen(session: VaultSession, vault: UnlockedVault, onBack: () -> Unit, open: (Screen) -> Unit) {
     val context = LocalContext.current
-    var autoLockDialog by remember { mutableStateOf(false) }
-    var removeRecovery by remember { mutableStateOf(false) }
     var selfTest by remember { mutableStateOf<SelfTest.Result?>(null) }
     var selfTestRunning by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     var protection by remember { mutableStateOf<DeviceLayer.Protection?>(null) }
     LaunchedEffect(Unit) { protection = withContext(Dispatchers.Default) { session.deviceLayer.protection() } }
     val versionName = remember { runCatching { context.packageManager.getPackageInfo(context.packageName, 0).versionName }.getOrNull() ?: "?" }
-    var minutes by remember { mutableIntStateOf(session.prefs.autoLockMinutes) }
 
     Page(title = stringResource(R.string.settings), onBack = onBack) {
         Section(stringResource(R.string.section_security))
+        SettingRow(stringResource(R.string.security_privacy), stringResource(R.string.security_privacy_sub)) { open(Screen.Security) }
         SettingRow(stringResource(R.string.lock_now), null) { session.lock() }
-        SettingRow(stringResource(R.string.auto_lock), pluralStringResource(R.plurals.auto_lock_minutes, minutes, minutes)) { autoLockDialog = true }
-        SettingRow(stringResource(R.string.change_password), null) { open(Screen.ChangePassword) }
-        if (vault.hasRecoveryKey) {
-            SettingRow(stringResource(R.string.replace_recovery_key), stringResource(R.string.replace_recovery_key_sub)) { open(Screen.RecoverySetup) }
-            SettingRow(stringResource(R.string.remove_recovery_key), null) { removeRecovery = true }
-        } else {
-            SettingRow(stringResource(R.string.set_up_recovery), stringResource(R.string.no_recovery_sub)) { open(Screen.RecoverySetup) }
-        }
         SettingRow(
             stringResource(R.string.device_protection),
             stringResource(
@@ -594,38 +607,16 @@ private fun SettingsScreen(session: VaultSession, vault: UnlockedVault, onBack: 
         Quiet(stringResource(R.string.no_internet), Modifier.padding(vertical = 12.dp))
     }
 
-    if (autoLockDialog) AlertDialog(
-        onDismissRequest = { autoLockDialog = false },
-        title = { Text(stringResource(R.string.auto_lock)) },
-        text = {
-            Column {
-                for (m in listOf(1, 2, 5, 10)) Row(
-                    Modifier.fillMaxWidth().heightIn(min = 48.dp).selectable(selected = minutes == m, role = Role.RadioButton) {
-                        minutes = m; session.prefs.autoLockMinutes = m; autoLockDialog = false
-                    },
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    RadioButton(selected = minutes == m, onClick = null)
-                    Text(pluralStringResource(R.plurals.auto_lock_minutes, m, m), modifier = Modifier.padding(start = 12.dp))
-                }
-            }
-        },
-        confirmButton = { TextButton(onClick = { autoLockDialog = false }) { Text(stringResource(R.string.cancel)) } },
-    )
-    if (removeRecovery) ConfirmDialog(
-        stringResource(R.string.remove_recovery_key), stringResource(R.string.remove_recovery_body), stringResource(R.string.remove),
-        danger = true, requireTyping = stringResource(R.string.skip_phrase), onDismiss = { removeRecovery = false },
-    ) { vault.setRecoveryKey(null); session.prefs.noRecoveryAcknowledged = false; removeRecovery = false; onBack() }
 }
 
 @Composable
-private fun Section(title: String) = Text(
+internal fun Section(title: String) = Text(
     title, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary,
     modifier = Modifier.padding(top = 20.dp, bottom = 4.dp),
 )
 
 @Composable
-private fun SettingRow(title: String, subtitle: String?, onClick: () -> Unit) {
+internal fun SettingRow(title: String, subtitle: String?, onClick: () -> Unit) {
     Column(Modifier.fillMaxWidth().heightIn(min = 56.dp).clickable(onClick = onClick).padding(vertical = 10.dp), verticalArrangement = Arrangement.Center) {
         Text(title, style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onBackground)
         if (subtitle != null) Quiet(subtitle)

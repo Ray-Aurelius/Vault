@@ -25,12 +25,14 @@ class MainActivity : ComponentActivity() {
     private val session get() = (application as BulwarkApplication).session
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        SecureWindow.apply(this)
+        SecureWindow.apply(this, session.secureScreens.value)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             BulwarkTheme {
                 val state by session.state.collectAsState()
+                val secure by session.secureScreens.collectAsState()
+                LaunchedEffect(secure) { SecureWindow.apply(this@MainActivity, secure) }
                 LaunchedEffect(Unit) { while (true) { delay(5_000); session.checkIdle() } }
                 when (val s = state) {
                     State.NeedsTerms -> OnboardingFlow(onAccepted = session::acceptTerms, onDecline = ::finishAndRemoveTask)

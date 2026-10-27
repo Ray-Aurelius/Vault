@@ -28,6 +28,7 @@ class BulwarkApplication : Application() {
         // Auto-lock: whenever Bulwark leaves the screen (unless the system file picker is open for it)...
         ProcessLifecycleOwner.get().lifecycle.addObserver(object : DefaultLifecycleObserver {
             override fun onStop(owner: LifecycleOwner) = session.onAppBackgrounded()
+            override fun onStart(owner: LifecycleOwner) = session.onAppForegrounded()
         })
         // ...and always when the screen turns off.
         ContextCompat.registerReceiver(

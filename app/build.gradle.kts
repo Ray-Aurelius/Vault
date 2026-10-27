@@ -11,8 +11,8 @@ android {
         applicationId = "app.bulwark.android"
         minSdk = 29
         targetSdk = 36
-        versionCode = 3
-        versionName = "0.2.1-preview"
+        versionCode = 4
+        versionName = "0.3.0-preview"
         ndk {
             // Phones in use today; x86_64 covers emulators. Drops JNA's obsolete mips/armeabi builds.
             abiFilters += setOf("arm64-v8a", "armeabi-v7a", "x86_64")

@@ -191,6 +191,99 @@
     <string name="licences">Open-source licences</string>
     <string name="version">Version</string>
 
+
+    <!-- Security & privacy -->
+    <string name="security_privacy">Security &amp; privacy</string>
+    <string name="security_privacy_sub">Biometrics, auto-lock, break-in protection, screen privacy</string>
+    <string name="security_intro">Every setting starts at its most private choice. Making Bulwark less strict asks for your password first.</string>
+    <string name="section_unlock">Unlocking</string>
+    <string name="section_auto_lock">Auto-lock</string>
+    <string name="section_break_in">Break-in protection</string>
+    <string name="section_screen">Screen privacy</string>
+    <string name="section_files">Files</string>
+    <string name="section_danger">Danger zone</string>
+    <string name="off">Off</string>
+    <string name="turn_on">Turn on</string>
+    <string name="allow">Allow</string>
+    <string name="erase">Erase</string>
+    <string name="confirm_password_title">Confirm it\'s you</string>
+    <string name="confirm_password_body">Enter your vault password to make this change.</string>
+
+    <string name="bio_unlock">Fingerprint or face unlock</string>
+    <string name="bio_off_sub">Off. When on, a fresh fingerprint or face match is needed every time; your biometric data never leaves the phone\'s secure hardware.</string>
+    <string name="bio_on_sub">On. Your password is still required after a restart and when the time below runs out.</string>
+    <string name="bio_no_hardware">This phone has no strong fingerprint or face sensor that Bulwark can use.</string>
+    <string name="bio_not_enrolled">Add a fingerprint or face in your phone\'s settings first.</string>
+    <string name="bio_prompt_title">Bulwark</string>
+    <string name="bio_prompt_setup">Confirm to turn on biometric unlock</string>
+    <string name="bio_prompt_unlock">Unlock your vault</string>
+    <string name="bio_use_password">Use password</string>
+    <string name="bio_unlock_button">Unlock with fingerprint or face</string>
+    <string name="bio_setup_failed">Biometric unlock couldn\'t be turned on. Please try again.</string>
+    <string name="bio_invalidated">Your phone\'s fingerprints or faces changed, so biometric unlock was switched off. Use your password, then turn it back on in Settings if you want it.</string>
+    <string name="password_every">Ask for the password every</string>
+    <string name="password_every_sub">%1$s, and always after the phone restarts</string>
+
+    <string name="lock_leaving">When you leave Bulwark</string>
+    <string name="immediately">Lock immediately</string>
+    <string name="lock_screen_off">Lock when the screen turns off</string>
+    <string name="lock_screen_off_sub">Recommended. Locks even within the time above.</string>
+
+    <string name="attempt_delays">Delays after wrong passwords</string>
+    <string name="attempt_delays_sub">Always on: after 5 wrong tries, waits grow from 30 seconds to 1 hour.</string>
+    <string name="notify_failed">Tell me about wrong attempts</string>
+    <string name="notify_failed_sub">After you unlock, see how many wrong passwords were tried while it was locked.</string>
+    <string name="erase_after">Erase vault after wrong passwords</string>
+    <string name="erase_phrase">erase my vault</string>
+
+    <string name="block_screens">Block screenshots and hide in recent apps</string>
+    <string name="block_screens_sub">Also blocks screen recording and casting.</string>
+    <string name="allow_screens_title">Allow screenshots?</string>
+    <string name="allow_screens_body">Screenshots, screen recordings and the recent-apps preview could then show your files, and other apps could capture them.</string>
+
+    <string name="confirm_export">Ask for password before exporting</string>
+    <string name="confirm_export_sub">Stops someone with your unlocked phone from taking decrypted copies.</string>
+    <string name="trash_keep">Keep items in the trash for</string>
+
+    <string name="erase_now">Erase this vault</string>
+    <string name="erase_now_sub">Permanently destroys the vault and its keys on this phone.</string>
+    <string name="erase_now_body">Every file in this vault and its keys on this phone will be destroyed immediately. Nobody can undo this.</string>
+
+    <string name="failed_notice_body">If that wasn\'t you, someone may have tried to open your vault. Consider changing your password.</string>
+
+    <plurals name="days">
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
+    <plurals name="hours">
+        <item quantity="one">%d hour</item>
+        <item quantity="other">%d hours</item>
+    </plurals>
+    <plurals name="after_seconds">
+        <item quantity="one">After %d second</item>
+        <item quantity="other">After %d seconds</item>
+    </plurals>
+    <plurals name="after_minutes">
+        <item quantity="one">After %d minute</item>
+        <item quantity="other">After %d minutes</item>
+    </plurals>
+    <plurals name="erase_after_count">
+        <item quantity="one">After %d wrong password</item>
+        <item quantity="other">After %d wrong passwords in a row</item>
+    </plurals>
+    <plurals name="erase_after_body">
+        <item quantity="one">After %d wrong password, everything in this vault on this phone will be destroyed. Nobody can recover it.</item>
+        <item quantity="other">After %d wrong passwords in a row, everything in this vault on this phone will be destroyed. Nobody can recover it, and anyone who picks up your phone could trigger it.</item>
+    </plurals>
+    <plurals name="erase_warning">
+        <item quantity="one">%d more wrong password will erase this vault.</item>
+        <item quantity="other">%d more wrong passwords will erase this vault.</item>
+    </plurals>
+    <plurals name="failed_notice_title">
+        <item quantity="one">%d wrong password since you last unlocked</item>
+        <item quantity="other">%d wrong passwords since you last unlocked</item>
+    </plurals>
+
     <plurals name="storage_used_sub">
         <item quantity="one">%1$s for %2$d file, including encryption overhead</item>
         <item quantity="other">%1$s for %2$d files, including encryption overhead</item>

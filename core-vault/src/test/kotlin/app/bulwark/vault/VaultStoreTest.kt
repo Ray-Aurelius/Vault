@@ -28,7 +28,7 @@ class VaultStoreTest {
     private val fast = Argon2Params(1, 8L * 1024 * 1024)
     private val dir: File = Files.createTempDirectory("bulwark-vault").toFile()
     private var now = 1_000_000L
-    private fun store() = VaultStore(File(dir, "vault"), p, NoDeviceLayer) { now }
+    private fun store() = VaultStore(File(dir, "vault"), p, NoDeviceLayer, clock = { now })
     private val pw = "orbit-velvet-candle-harbor".toCharArray()
 
     @AfterTest fun cleanup() { dir.deleteRecursively() }
@@ -242,5 +242,46 @@ class PasswordStrengthTest {
         val words = Passphrase.generate(p).split("-")
         assertEquals(6, words.size)
         assertTrue(words.all { it in RecoveryKey.wordlist })
+    }
+}
+
+class SecretSlotTest {
+    private val p = Primitives(LazySodiumJava(SodiumJava()))
+    private val fast = Argon2Params(1, 8L * 1024 * 1024)
+    private val dir: File = Files.createTempDirectory("bulwark-slots").toFile()
+    private var retention = UnlockedVault.DEFAULT_TRASH_RETENTION
+    private var now = 1_000_000L
+    private fun store() = VaultStore(File(dir, "v"), p, NoDeviceLayer, { now }, { retention })
+    private val pw = "orbit-velvet-candle-harbor".toCharArray()
+
+    @AfterTest fun cleanup() { dir.deleteRecursively() }
+
+    @Test
+    fun `a biometric slot unlocks, is independent of the password, and can be removed`() {
+        val bio = app.bulwark.crypto.SecretBytes.adopt(p.randomBytes(32))
+        store().create(pw, fast, null, allowBelowFloor = true).use { v ->
+            v.setSecretSlot(app.bulwark.crypto.Keyslot.Type.BIOMETRIC, bio.copy())
+            v.changePassword("another-long-passphrase".toCharArray(), fast, true)
+        }
+        assertTrue(store().hasSlot(app.bulwark.crypto.Keyslot.Type.BIOMETRIC))
+        store().unlockWithSecret(app.bulwark.crypto.Keyslot.Type.BIOMETRIC, bio.copy()).use { v ->
+            assertTrue(v.verifyPassword("another-long-passphrase".toCharArray()))
+            assertFalse(v.verifyPassword(pw))
+            v.setSecretSlot(app.bulwark.crypto.Keyslot.Type.BIOMETRIC, null)
+        }
+        assertFalse(store().hasSlot(app.bulwark.crypto.Keyslot.Type.BIOMETRIC))
+        assertFailsWith<WrongCredentialsException> { store().unlockWithSecret(app.bulwark.crypto.Keyslot.Type.BIOMETRIC, bio) }
+    }
+
+    @Test
+    fun `trash retention setting is applied on unlock`() {
+        val id = store().create(pw, fast, null, allowBelowFloor = true).use { v ->
+            v.importFile("x", "a/b", 3, ByteArrayInputStream(ByteArray(3)), null).id.also { v.moveToTrash(it) }
+        }
+        now += 40L * 24 * 3600 * 1000
+        retention = 90L * 24 * 3600 * 1000
+        store().unlock(pw).use { v -> assertTrue(v.get(id) != null, "kept under a 90-day setting") }
+        retention = 7L * 24 * 3600 * 1000
+        store().unlock(pw).use { v -> assertNull(v.get(id)) }
     }
 }
