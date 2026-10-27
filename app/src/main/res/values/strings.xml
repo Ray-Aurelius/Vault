@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Bulwark</string>
+    <string name="tagline">Encrypted file storage</string>
+    <string name="foundation_title">Foundation build</string>
+    <string name="foundation_body">This early build checks that Bulwark\'s encryption works on your phone. It does not store any files yet.</string>
+    <string name="self_test_running">Running encryption self-test…</string>
+    <string name="self_test_passed">Encryption self-test passed</string>
+    <string name="self_test_failed">Encryption self-test failed: %1$s</string>
+    <string name="self_test_detail">Argon2id, XChaCha20-Poly1305 streaming, keyslots and recovery words checked on this device in %1$d ms.</string>
+    <string name="no_internet">No internet permission. Check it yourself in Settings → Apps → Bulwark → Permissions.</string>
+</resources>

@@ -1,0 +1,20 @@
+# Gradle and build output
+.gradle/
+.kotlin/
+build/
+local.properties
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+
+# Never commit signing keys or secrets
+*.jks
+*.keystore
+keystore.properties
+*.p12
+*.pem

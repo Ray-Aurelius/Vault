@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Rampart mark for in-app use (tinted by the caller). Viewport crops to the wall itself. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="72dp" android:height="64dp"
+    android:viewportWidth="72" android:viewportHeight="64">
+    <group android:translateX="-14" android:translateY="-20">
+        <path android:fillColor="#FF1F4E8C" android:pathData="M14 20H30V32H42V20H58V32H70V20H86V84H14Z"/>
+        <path android:strokeColor="#FFFFFFFF" android:strokeWidth="3"
+            android:pathData="M14 50H86M14 67H86M32 32V50M68 32V50M50 50V67M32 67V84M68 67V84"/>
+    </group>
+</vector>
