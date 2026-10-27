@@ -1,0 +1,43 @@
+Version 1.0 (draft) · Effective [launch date]
+
+The short version: Bulwark collects nothing. Your files never leave your phone unless you move them. You alone hold the keys, and you alone are responsible for them.
+
+# What we collect
+Nothing. Bulwark has no internet permission, so it cannot connect to the internet at all. There are no accounts, analytics, advertising, crash reports, telemetry or tracking of any kind. We do not know who you are, what you store, or how you use the app.
+
+# Where your data lives
+Everything you put in Bulwark, including files, notes, photos, videos, file names and folders, is encrypted on your phone. It stays there unless you choose to export a file or save a backup file. We never receive a copy.
+
+# What we can access
+Nothing. We do not have your password, your recovery methods or your encryption keys. We cannot open your vault, reset your password or recover your files, and no one can make us, because we have nothing to hand over.
+
+# Permissions and why
+- Biometrics: to unlock with your fingerprint or face, if you turn it on. Your biometric data stays in your phone's secure hardware; Bulwark never sees it.
+- Camera: to take photos and videos directly into the vault, and to scan a recovery sheet if you choose to.
+- Microphone: to record sound with videos, only while you are recording.
+- NFC: to use a hardware security key, if you register one.
+Bulwark asks for each permission only when you first use the feature that needs it, and works without any of them.
+
+# Purchases
+Bulwark is a one-time purchase through Google Play. Google handles the payment under its own privacy policy; we receive standard sales reports from Google and nothing that links a buyer to anything stored in the app.
+
+# Your responsibility
+Because only you hold the keys, you are solely responsible for:
+- remembering your password and keeping your recovery methods safe;
+- keeping backups up to date and stored safely;
+- anything you export, share or open in another app, which leaves Bulwark's protection;
+- the security of your phone and the apps you install on it.
+
+If you lose your password and every recovery method you set up, your files are permanently unrecoverable. This is how Bulwark keeps them private, not a fault. Bulwark warns you before any action that could lose data, but we are not responsible for lost data; keep your own copies of important files and make regular backups.
+
+# Security, honestly
+Bulwark uses strong, published encryption and will be independently audited before its first full release, but no app can promise perfect security. Bulwark cannot protect your files from someone who has taken full control of your phone's operating system, someone watching your screen while the vault is open, or copies you make outside the app.
+
+# Children
+Bulwark is not directed at children under [13 / 16 / 18].
+
+# Changes
+If we change this Statement, the new version ships inside an app update and is shown to you before you continue.
+
+# Contact
+[Company name], [email address]. We will never ask for your password or recovery key; anyone who does is not us.

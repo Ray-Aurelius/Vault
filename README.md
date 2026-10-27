@@ -8,15 +8,16 @@ Bulwark is an Android vault for any file: documents, photos, videos and notes, e
 phone. It has **no internet permission**, no accounts, no ads, no tracking and no subscriptions:
 one purchase, and nobody (including us) can open your files.
 
-> **Status: foundation build (0.1).** The encryption core and project are in place; the app does
-> not store files yet. Do not use pre-release builds for real data.
+> **Status: preview (0.2).** You can set up a vault, import, view, organise, export and trash files.
+> Backups are not available yet, so do not use pre-release builds for your only copy of anything.
 
 ## What's in this repository
 
 | Path | What it is |
 | --- | --- |
 | `core-crypto/` | The encryption core: keyslots, master key, streaming file format, recovery words, locked capture. Pure Kotlin over libsodium, fully unit-tested on a computer. |
-| `app/` | The Android app (Kotlin, Jetpack Compose). Currently a foundation screen that runs an on-device encryption self-test. |
+| `core-vault/` | The vault on disk: encrypted index, crash-safe imports, folders, trash, password and recovery-key changes, password strength. Unit-tested on a computer. |
+| `app/` | The Android app (Kotlin, Jetpack Compose): Terms gate, setup, unlock, auto-lock, Android Keystore device layer, file browser, import, viewer, export, trash and settings. |
 | `docs/file-format.md` | The open specification of every format Bulwark writes. |
 | `branding/` | Logo, icons, brand fonts and the scripts that generate them. |
 | `scripts/check_apk.py` | The security gate every APK must pass: permission allowlist, no exported components, no backups. |
@@ -40,7 +41,7 @@ See [SECURITY.md](SECURITY.md) for how to report a vulnerability.
 Requirements: JDK 21, Android SDK with platform 37.0 and build-tools 36.1.0.
 
 ```sh
-./gradlew :core-crypto:test            # crypto tests (run on your computer)
+./gradlew :core-crypto:test :core-vault:test   # unit tests (run on your computer)
 ./gradlew :app:assembleDebug           # debug APK in app/build/outputs/apk/debug/
 python3 scripts/check_apk.py app/build/outputs/apk/debug/app-debug.apk
 ```

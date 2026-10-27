@@ -38,8 +38,8 @@ jobs:
           yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-37.0" "build-tools;36.1.0" > /dev/null
 
-      - name: Crypto core tests
-        run: scripts/ci-gradle.sh :core-crypto:test
+      - name: Crypto core and vault tests
+        run: scripts/ci-gradle.sh :core-crypto:test :core-vault:test
 
       - name: Lint
         run: scripts/ci-gradle.sh :app:lintDebug
@@ -74,5 +74,6 @@ jobs:
           name: reports
           path: |
             core-crypto/build/reports/tests/
+            core-vault/build/reports/tests/
             app/build/reports/lint-results-debug.html
           retention-days: 14

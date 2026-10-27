@@ -25,3 +25,4 @@ rootProject.name = "Bulwark"
 
 include(":app")
 include(":core-crypto")
+include(":core-vault")

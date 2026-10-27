@@ -1,0 +1,27 @@
+Bulwark is free software under the GNU General Public License, version 3. Its source code and full licence text are published with the project.
+
+Bulwark is built with these open-source components. Thank you to their authors.
+
+# libsodium
+All of Bulwark's cryptography. ISC licence. Copyright (c) Frank Denis.
+
+# lazysodium
+Java bindings for libsodium. Mozilla Public License 2.0. Copyright (c) Terl Tech Ltd.
+
+# Java Native Access (JNA)
+Native calls for the bindings. Apache License 2.0.
+
+# AndroidX and Jetpack Compose
+App framework and user interface. Apache License 2.0. Copyright (c) The Android Open Source Project.
+
+# Kotlin
+Language runtime. Apache License 2.0. Copyright (c) JetBrains s.r.o.
+
+# Archivo
+Display font. SIL Open Font License 1.1. Copyright (c) The Archivo Project Authors (Omnibus-Type).
+
+# Source Sans 3 and Source Code Pro
+Body and recovery-word fonts. SIL Open Font License 1.1. Copyright (c) Adobe.
+
+# BIP-39 English word list
+Words for recovery keys and passphrases. MIT licence. Copyright (c) the BIP-39 authors.
